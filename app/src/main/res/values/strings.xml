@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Inventory App</string>
+    <!-- Label for editor menu option to save product and leave editor [CHAR LIMIT=20] -->
+    <string name="action_save">Save</string>
+    <!-- Title for the activity to add a new pet [CHAR LIMIT=20] -->
+    <string name="editor_activity_title_new_product">Add a Product</string>
+    <!-- Label for editor overflow menu option that deletes the current product [CHAR LIMIT=20] -->
+    <string name="action_delete">Delete</string>
+    <!-- Label for overflow menu option that deletes all Product data in the app [CHAR LIMIT=20] -->
+    <string name="action_delete_all_entries">Delete All Products </string>
+    <string name="hint_product_name">Name</string>
+    <string name="hint_product_price">Price</string>
+    <string name="hint_product_quantity">Quantity</string>
+    <!-- Toast message in editor when new pet has been successfully inserted [CHAR LIMIT=NONE] -->
+        <string name="editor_insert_product_successful">Pet saved</string>
+
+        <!-- Toast message in editor when new pet has failed to be inserted [CHAR LIMIT=NONE] -->
+        <string name="editor_insert_product_failed">Error with saving pet</string>
+
+</resources>
