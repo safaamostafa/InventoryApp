@@ -1,9 +1,13 @@
 package com.example.safsaf.inventoryapp;
 
 import android.Manifest;
+import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -35,10 +39,10 @@ import static com.example.safsaf.inventoryapp.data.ProductContract.productEntry;
  */
 
 
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /** Identifier for the pet data loader */
-    private static final int EXISTING_PET_LOADER = 0;
+    private static final int EXISTING_PRODUCT_LOADER = 0;
 
     /** Content URI for the existing pet (null if it's a new pet) */
     private Uri mCurrentProductUri;
@@ -69,16 +73,20 @@ public class EditorActivity extends AppCompatActivity {
         // Examine the intent that was used to launch this activity,
                 // in order to figure out if we're creating a new pet or editing an existing one.
         Intent intent = getIntent();
-        Uri currentProductUri = intent.getData();
+        mCurrentProductUri = intent.getData();
 
         // If the intent DOES NOT contain a pet content URI, then we know that we are
         // creating a new pet.
-        if (currentProductUri == null) {
+        if (mCurrentProductUri == null) {
             // This is a new pet, so change the app bar to say "Add a Pet"
             setTitle(getString(R.string.editor_activity_title_new_product));
         } else {
             // Otherwise this is an existing pet, so change app bar to say "Edit Pet"
             setTitle(getString(R.string.editor_activity_title_edit_product));
+
+            // Initialize a loader to read the pet data from the database
+            // and display the current values in the editor
+            getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER, null, this);
                     }
 
 
@@ -256,7 +264,65 @@ public class EditorActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+        // Since the editor shows all pet attributes, define a projection that contains
+        // all columns from the pet table
+        String[] projection = {
+                productEntry._ID,
+                productEntry.COLUMN_PRODUCT_NAME,
+                productEntry.COLUMN_PRODUCT_PRICE,
+                productEntry.COLUMN_PRODUCT_QUANTITY,
+                productEntry.COLUMN_PRODUCT_IMAGE};
+        // This loader will execute the ContentProvider's query method on a background thread
 
+        // This loader will execute the ContentProvider's query method on a background thread
+        return new CursorLoader(this,   // Parent activity context
+                productEntry.CONTENT_URI,   // Provider content URI to query
+                projection,             // Columns to include in the resulting Cursor
+                null,                   // No selection clause
+                null,
+                // No selection arguments
+                null);                  // Default sort order
+    }
 
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Bail early if the cursor is null or there is less than 1 row in the cursor
+                if (cursor == null || cursor.getCount() < 1) {
 
+                    return;
+                            }
+        // Proceed with moving to the first row of the cursor and reading data from it
+        // (This should be the only row in the cursor)
+        if (cursor.moveToFirst()) {
+            // Find the columns of pet attributes that we're interested in
+            int nameColumnIndex = cursor.getColumnIndex(productEntry.COLUMN_PRODUCT_NAME);
+            int priceColumnIndex = cursor.getColumnIndex(productEntry.COLUMN_PRODUCT_PRICE);
+            int quantityColumnIndex = cursor.getColumnIndex(productEntry.COLUMN_PRODUCT_QUANTITY);
+            final int imageColumnIndex = cursor.getColumnIndex(productEntry.COLUMN_PRODUCT_IMAGE);
+            // Extract out the value from the Cursor for the given column index
+            String productName = cursor.getString(nameColumnIndex);
+            String productPrice = cursor.getString(priceColumnIndex);
+            final String productQuantity = cursor.getString(quantityColumnIndex);
+            byte[] productImage = cursor.getBlob(imageColumnIndex);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(productImage, 0, productImage.length);
+            // Update the views on the screen with the values from the database
+            mNameEditText.setText(productName);
+            mPriceEditText.setText(productPrice);
+            mQuantityEditText.setText(productQuantity);
+            mImageView.setImageBitmap(bitmap);
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // If the loader is invalidated, clear out all the data from the input fields.
+        mNameEditText.setText("");
+        mPriceEditText.setText("");
+        mQuantityEditText.setText("");
+        mImageView.setImageBitmap(null);
+
+    }
 }// public class EditorActivity extends AppCompatActivity {

@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,
-               // No selection arguments
+                                      // No selection arguments
                 null);                  // Default sort order
             }
 
