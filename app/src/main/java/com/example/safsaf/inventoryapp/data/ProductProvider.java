@@ -123,6 +123,13 @@ public class ProductProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+
+        // Set notification URI on the Cursor,
+        // so we know what content URI the Cursor was created for.
+        // If the data at this URI changes, then we know we need to update the Cursor.
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        // Return the cursor
         return cursor;
     }
     /**
@@ -138,7 +145,8 @@ public class ProductProvider extends ContentProvider {
                         throw new IllegalArgumentException("Insertion is not supported for " + uri);
                 }
             }
-
+/**
+ * هنا بقي مفروض ان لما المستخم يدخل اي تفاصيل فاضيه او يدخل قيمة غلط ما يكملش  معايا بقي بيكمل عادى*/
     /**
       * Insert a pet into the database with the given content values. Return the new content URI
       * for that specific row in the database.
@@ -147,17 +155,18 @@ public class ProductProvider extends ContentProvider {
 
                 // Check that the name is not null
                 String name = values.getAsString(productEntry.COLUMN_PRODUCT_NAME);
-                if (name == null || name.length()==0) {
+                if (name == null && name.length()==0) {
                     throw new IllegalArgumentException("Product requires a name");
+
                 }
                 // If the weight is provided, check that it's greater than or equal to 0 kg
                 Integer price = values.getAsInteger(productEntry.COLUMN_PRODUCT_PRICE);
-                if(price==null || price<=0) {
+                if(price !=null && price<0) {
                     throw new IllegalArgumentException("Product requires valid price");
                 }
                 // If the weight is provided, check that it's greater than or equal to 0 kg
                 Integer quantity = values.getAsInteger(productEntry.COLUMN_PRODUCT_QUANTITY);
-                if(quantity==null || quantity<=0) {
+                if(quantity !=null && quantity<0) {
                     throw new IllegalArgumentException("Product requires valid quantity ");
                 }
                 byte[] image = values.getAsByteArray(productEntry.COLUMN_PRODUCT_IMAGE);
@@ -174,17 +183,60 @@ public class ProductProvider extends ContentProvider {
                     Log.e(LOG_TAG, "Failed to insert row for " + uri);
                     return null;
                 }
+// Notify all listeners that the data has changed for the pet content URI
+                        getContext().getContentResolver().notifyChange(uri, null);
 
                 // Return the new URI with the ID (of the newly inserted row) appended at the end
                 return ContentUris.withAppendedId(uri, id);
     }
 
     /**
-     * Updates the data at the given selection and selection arguments, with the new ContentValues.
-     */
-    @Override
-    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        return 0;
+     +     * Update pets in the database with the given content values. Apply the changes to the rows
+     +     * specified in the selection and selection arguments (which could be 0 or 1 or more pets).
+     +     * Return the number of rows that were successfully updated.
+     +     */
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        // If the {@link PetEntry#COLUMN_PET_NAME} key is present,
+        // check that the name value is not null.
+        // Check that the name is not null
+        String name = values.getAsString(productEntry.COLUMN_PRODUCT_NAME);
+        if (name == null || name.length()==0) {
+            throw new IllegalArgumentException("Product requires a name");
+
+        }
+        // If the weight is provided, check that it's greater than or equal to 0 kg
+        Integer price = values.getAsInteger(productEntry.COLUMN_PRODUCT_PRICE);
+        if(price==null || price<0) {
+            throw new IllegalArgumentException("Product requires valid price");
+        }
+        // If the weight is provided, check that it's greater than or equal to 0 kg
+        Integer quantity = values.getAsInteger(productEntry.COLUMN_PRODUCT_QUANTITY);
+        if(quantity==null || quantity<0) {
+            throw new IllegalArgumentException("Product requires valid quantity ");
+        }
+        byte[] image = values.getAsByteArray(productEntry.COLUMN_PRODUCT_IMAGE);
+        if(image==null ) {
+            throw new IllegalArgumentException("Product requires valid image ");
+        }
+
+        // If there are no values to update, then don't try to update the database
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        // Otherwise, get writeable database to update the data
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+        // Perform the update on the database and get the number of rows affected
+        int rowsUpdated = database.update(productEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        // If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+                    }
+
+        // Return the number of rows updated
+        return rowsUpdated;
     }
 
     /**
@@ -192,14 +244,52 @@ public class ProductProvider extends ContentProvider {
      */
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        // Get writeable database
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+        // Track the number of rows that were deleted
+                int rowsDeleted;
+
+
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                // Delete all rows that match the selection and selection args
+                rowsDeleted = database.delete(productEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case PRODUCT_ID:
+                // Delete a single row given by the ID in the URI
+                selection = productEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                rowsDeleted = database.delete(productEntry.TABLE_NAME, selection, selectionArgs);
+                                break;
+            default:
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
+        }
+        // If 1 or more rows were deleted, then notify all listeners that the data at the
+                // given URI has changed
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+                    }
+
+        // Return the number of rows deleted
+        return rowsDeleted;
     }
+
+
 
     /**
      * Returns the MIME type of data for the content URI.
      */
     @Override
     public String getType(Uri uri) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                return productEntry.CONTENT_LIST_TYPE;
+            case PRODUCT_ID:
+                return productEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
+        }
     }
 }

@@ -37,6 +37,11 @@ import static com.example.safsaf.inventoryapp.data.ProductContract.productEntry;
 
 public class EditorActivity extends AppCompatActivity {
 
+    /** Identifier for the pet data loader */
+    private static final int EXISTING_PET_LOADER = 0;
+
+    /** Content URI for the existing pet (null if it's a new pet) */
+    private Uri mCurrentProductUri;
     /** EditText field to enter the product's name */
     private EditText mNameEditText;
 
@@ -49,6 +54,9 @@ public class EditorActivity extends AppCompatActivity {
     private Button mButtonImage;
      private ImageView mImageView;
 
+
+
+
     final int REQUEST_CODE_GALLERY = 999;
 
 
@@ -57,12 +65,32 @@ public class EditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editor_activity);
 
+        // مشر فاهمة ليه مش عاوز يعمل انت
+        // Examine the intent that was used to launch this activity,
+                // in order to figure out if we're creating a new pet or editing an existing one.
+        Intent intent = getIntent();
+        Uri currentProductUri = intent.getData();
+
+        // If the intent DOES NOT contain a pet content URI, then we know that we are
+        // creating a new pet.
+        if (currentProductUri == null) {
+            // This is a new pet, so change the app bar to say "Add a Pet"
+            setTitle(getString(R.string.editor_activity_title_new_product));
+        } else {
+            // Otherwise this is an existing pet, so change app bar to say "Edit Pet"
+            setTitle(getString(R.string.editor_activity_title_edit_product));
+                    }
+
+
         // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.edit_product_name);
         mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
         mQuantityEditText = (EditText) findViewById(R.id.edit_product_quantity);
         mButtonImage=(Button)findViewById(R.id.chooseButton);
         mImageView = (ImageView) findViewById(R.id.imageView);
+
+
+
 
 
 

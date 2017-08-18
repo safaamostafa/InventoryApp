@@ -16,6 +16,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:srcCompat="@mipmap/ic_launcher"/>
+
     <Button
         android:id="@+id/chooseButton"
         android:layout_width="wrap_content"
@@ -38,6 +39,7 @@
             android:id="@+id/edit_product_name"
             android:layout_height="wrap_content"
             android:hint="@string/hint_product_name"
+            android:inputType="text"
             style="@style/EditorFieldStyle"/>
     </LinearLayout>
 
@@ -53,6 +55,7 @@
         <EditText
             android:id="@+id/edit_product_price"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:hint="@string/hint_product_price"
             style="@style/EditorFieldStyle"/>
     </LinearLayout>
@@ -70,6 +73,7 @@
             android:id="@+id/edit_product_quantity"
             android:layout_height="wrap_content"
             android:hint="@string/hint_product_quantity"
+            android:inputType="number"
             style="@style/EditorFieldStyle"/>
     </LinearLayout>
 

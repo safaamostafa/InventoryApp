@@ -4,6 +4,8 @@
     <string name="action_save">Save</string>
     <!-- Title for the activity to add a new pet [CHAR LIMIT=20] -->
     <string name="editor_activity_title_new_product">Add a Product</string>
+    <!-- Title for the activity to edit an existing pet [CHAR LIMIT=20] -->
+        <string name="editor_activity_title_edit_product">Edit product</string>
     <!-- Label for editor overflow menu option that deletes the current product [CHAR LIMIT=20] -->
     <string name="action_delete">Delete</string>
     <!-- Label for overflow menu option that deletes all Product data in the app [CHAR LIMIT=20] -->
@@ -16,5 +18,12 @@
 
         <!-- Toast message in editor when new pet has failed to be inserted [CHAR LIMIT=NONE] -->
         <string name="editor_insert_product_failed">Error with saving pet</string>
+    <string name="sale">sell</string>
+    <string name="Toat">You cannot have less than 1 cap</string>
+    <!-- Title text for the empty view, which describes the empty dog house image [CHAR LIMIT=50] -->
+        <string name="empty_view_title_text">It\'s a bit lonely here...</string>
+
+        <!-- Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] -->
+        <string name="empty_view_subtitle_text">Get started by adding a product</string>
 
 </resources>
