@@ -10,13 +10,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import static com.example.safsaf.inventoryapp.data.ProductContract.productEntry;
+import static com.example.safsaf.inventoryapp.data.ProductContract.ProductEntry;
 /**
  * Displays list of products that were entered and stored in the app.
  */
@@ -54,30 +55,39 @@ public class MainActivity extends AppCompatActivity implements
                 mCursorAdapter = new ProductCursorAdapter(this, null);
                 productListView.setAdapter(mCursorAdapter);
 
-        // مش فاهمة في ايه انا مافيش هلى ارور ليه مش عاوز يعمل انتنت
         // Setup the item click listener
         productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Create new intent to go to {@link EditorActivity}
-                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+                Intent mIntent = new Intent(MainActivity.this, EditorActivity.class);
 
                 // Form the content URI that represents the specific pet that was clicked on,
                 // by appending the "id" (passed as input to this method) onto the
                 // {@link PetEntry#CONTENT_URI}.
                 // For example, the URI would be "content://com.example.android.pets/pets/2"
                 // if the pet with ID 2 was clicked on.
-                Uri currentProductUri = ContentUris.withAppendedId(productEntry.CONTENT_URI, id);
+                Uri currentProductUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
 
                 // Set the URI on the data field of the intent
-                intent.setData(currentProductUri);
+                mIntent.setData(currentProductUri);
                 // Launch the {@link EditorActivity} to display the data for the current pet.
-                startActivity(intent);
-                            }
+                startActivity(mIntent);
+            }
+
         });
+
 
         // Kick off the loader
                 getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
+    }
+
+    /**
+     +     * Helper method to delete all pets in the database.
+     +     */
+    private void deleteAllPets() {
+        int rowsDeleted = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
+        Log.v("CatalogActivity", rowsDeleted + " rows deleted from pet database");
     }
 
 
@@ -95,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
-                // Do nothing for now
+                deleteAllPets();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -106,15 +116,15 @@ public class MainActivity extends AppCompatActivity implements
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Define a projection that specifies the columns from the table we care about.
                 String[] projection = {
-                                productEntry._ID,
-                                productEntry.COLUMN_PRODUCT_NAME,
-                                productEntry.COLUMN_PRODUCT_PRICE,
-                                productEntry.COLUMN_PRODUCT_QUANTITY,
-                                productEntry.COLUMN_PRODUCT_IMAGE};
+                                ProductEntry._ID,
+                                ProductEntry.COLUMN_PRODUCT_NAME,
+                        ProductEntry.COLUMN_PRODUCT_PRICE,
+                        ProductEntry.COLUMN_PRODUCT_QUANTITY,
+                        ProductEntry.COLUMN_PRODUCT_IMAGE};
 
                         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
-                productEntry.CONTENT_URI,   // Provider content URI to query
+                ProductEntry.CONTENT_URI,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,

@@ -45,7 +45,7 @@ public  final class ProductContract {
      * Inner class that defines constant values for the product  database table.
      * Each entry in the table represents a single product.
      */
-    public static final class productEntry implements BaseColumns {
+    public static final class ProductEntry implements BaseColumns {
 
         /** The content URI to access the pet data in the provider */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PRODUCTS);

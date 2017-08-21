@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import static com.example.safsaf.inventoryapp.data.ProductContract.productEntry;
+import static com.example.safsaf.inventoryapp.data.ProductContract.ProductEntry;
 
 /**
  * Created by Safsaf on 8/14/2017.
@@ -40,12 +40,12 @@ public class ProductDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Create a String that contains the SQL statement to create the products table
-        String SQL_CREATE_PRODUCT_TABLE =  "CREATE TABLE " + productEntry.TABLE_NAME + " ("
-                + productEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + productEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
-                + productEntry.COLUMN_PRODUCT_PRICE + "  INTEGER NOT NULL DEFAULT 0, "
-                + productEntry.COLUMN_PRODUCT_QUANTITY + "  INTEGER NOT NULL DEFAULT 0, "
-                + productEntry.COLUMN_PRODUCT_IMAGE + " BYTE);";
+        String SQL_CREATE_PRODUCT_TABLE =  "CREATE TABLE " + ProductEntry.TABLE_NAME + " ("
+                + ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ProductEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
+                + ProductEntry.COLUMN_PRODUCT_PRICE + "  INTEGER NOT NULL DEFAULT 0, "
+                + ProductEntry.COLUMN_PRODUCT_QUANTITY + "  INTEGER NOT NULL DEFAULT 0, "
+                + ProductEntry.COLUMN_PRODUCT_IMAGE + " BYTE);";
         Log.v(LOG_TAG,SQL_CREATE_PRODUCT_TABLE);
 
         // Execute the SQL statement
