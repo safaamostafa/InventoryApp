@@ -15,21 +15,30 @@ import android.net.Uri;
 import android.util.Log;
 
 import static com.example.safsaf.inventoryapp.data.ProductContract.ProductEntry;
+
 /**
  * {@link ContentProvider} for products app.
  */
 
 public class ProductProvider extends ContentProvider {
-    /** Tag for the log messages */
+    /**
+     * Tag for the log messages
+     */
     public static final String LOG_TAG = ProductProvider.class.getSimpleName();
 
-    /** Database helper object*/
+    /**
+     * Database helper object
+     */
 
     private ProductDbHelper mDbHelper;
-    /** URI matcher code for the content URI for the products table */
-    private static final int PRODUCTS= 100;
+    /**
+     * URI matcher code for the content URI for the products table
+     */
+    private static final int PRODUCTS = 100;
 
-    /** URI matcher code for the content URI for a single product in the Products table */
+    /**
+     * URI matcher code for the content URI for a single product in the Products table
+     */
     private static final int PRODUCT_ID = 101;
 
     /**
@@ -68,7 +77,7 @@ public class ProductProvider extends ContentProvider {
     public boolean onCreate() {
         // Make sure the variable is a global variable, so it can be referenced from other
         // ContentProvider methods.
-        mDbHelper =new ProductDbHelper(getContext());
+        mDbHelper = new ProductDbHelper(getContext());
         return true;
     }
 
@@ -82,7 +91,7 @@ public class ProductProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getReadableDatabase();
 
         // This cursor will hold the result of the query
-        Cursor cursor= null;
+        Cursor cursor = null;
 
         // Figure out if the URI matcher can match the URI to a specific code
         int match = sUriMatcher.match(uri);
@@ -106,7 +115,7 @@ public class ProductProvider extends ContentProvider {
                 // arguments that will fill in the "?". Since we have 1 question mark in the
                 // selection, we have 1 String in the selection arguments' String array.
                 selection = ProductEntry._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
                 // This will perform a query on the products table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
@@ -127,8 +136,6 @@ public class ProductProvider extends ContentProvider {
     }
 
 
-
-
     /**
      * Insert new data into the provider with the given ContentValues.
      */
@@ -145,7 +152,7 @@ public class ProductProvider extends ContentProvider {
 /**
  * هنا بقي مفروض ان لما المستخم يدخل اي تفاصيل فاضيه او يدخل قيمة غلط ما يكملش  معايا بقي بيكمل عادى*/
 
-                                /** I need Help Here*/
+    /** I need Help Here*/
     /**
      * Insert a product into the database with the given content values. Return the new content URI
      * for that specific row in the database.
@@ -160,23 +167,23 @@ public class ProductProvider extends ContentProvider {
         }
         // If the price is provided, check that it's greater than or equal to 0
         Integer price = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_PRICE);
-        if(price !=null && price<0) {
+        if (price != null && price < 0) {
             throw new IllegalArgumentException("Product requires valid price");
         }
         // If the quantity is provided, check that it's greater than or equal to 0
         Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-        if(quantity !=null && quantity<0) {
+        if (quantity != null && quantity < 0) {
             throw new IllegalArgumentException("Product requires valid quantity ");
         }
         // Check that the supplier is not null
-        String supplier= values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER);
+        String supplier = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER);
         if (supplier == null) {
             throw new IllegalArgumentException("Product requires a supplier email");
 
         }
         // Check that the image is not null
         byte[] image = values.getAsByteArray(ProductEntry.COLUMN_PRODUCT_IMAGE);
-        if(image==null ) {
+        if (image == null) {
             throw new IllegalArgumentException("Product requires valid image ");
         }
         // Get writeable database
@@ -204,17 +211,19 @@ public class ProductProvider extends ContentProvider {
                 return updateProduct(uri, contentValues, selection, selectionArgs);
             case PRODUCT_ID:
                 selection = ProductEntry._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return updateProduct(uri, contentValues, selection, selectionArgs);
-            default: throw new IllegalArgumentException("Update is not supported for " + uri);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
 
         }
     }
+
     /**
-          * Update products in the database with the given content values. Apply the changes to the rows
-          * specified in the selection and selection arguments (which could be 0 or 1 or more products).
-          * Return the number of rows that were successfully updated.
-          */
+     * Update products in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more products).
+     * Return the number of rows that were successfully updated.
+     */
     private int updateProduct(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // If the {@link ProductEntry#COLUMN_PRODUCTT_NAME} key is present,
 
@@ -250,7 +259,7 @@ public class ProductProvider extends ContentProvider {
 
             }
         }
-          // Check that the image is not null
+        // Check that the image is not null
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_IMAGE)) {
             byte[] image = values.getAsByteArray(ProductEntry.COLUMN_PRODUCT_IMAGE);
             if (image == null) {
@@ -301,7 +310,7 @@ public class ProductProvider extends ContentProvider {
             case PRODUCT_ID:
                 // Delete a single row given by the ID in the URI
                 selection = ProductEntry._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(ProductEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
@@ -316,7 +325,6 @@ public class ProductProvider extends ContentProvider {
         // Return the number of rows deleted
         return rowsDeleted;
     }
-
 
 
     /**

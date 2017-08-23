@@ -27,8 +27,8 @@ import static com.example.safsaf.inventoryapp.data.ProductContract.ProductEntry;
 
 /**
  * {@link ProductCursorAdapter} is an adapter for a list or grid view
- * that uses a {@link Cursor} of pet data as its data source. This adapter knows
- * how to create list items for each row of pet data in the {@link Cursor}.
+ * that uses a {@link Cursor} of product data as its data source. This adapter knows
+ * how to create list items for each row of  product  data in the {@link Cursor}.
  */
 public class ProductCursorAdapter extends CursorAdapter {
 
@@ -61,11 +61,9 @@ public class ProductCursorAdapter extends CursorAdapter {
     }
 
 
-
-
     /**
      * This method binds the pet data (in the current row pointed to by cursor) to the given
-     * list item layout. For example, the name for the current pet can be set on the name TextView
+     * list item layout. For example, the name for the current product can be set on the name TextView
      * in the list item layout.
      *
      * @param view    Existing view, returned earlier by newView() method
@@ -74,7 +72,7 @@ public class ProductCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public  void bindView(View view, final Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
 
         final TextView nameTextView = (TextView) view.findViewById(R.id.name);
@@ -84,19 +82,19 @@ public class ProductCursorAdapter extends CursorAdapter {
         Button sellButton = (Button) view.findViewById(R.id.sellButton);
 
 
-        // Find the columns of pet attributes that we're interested in
+        // Find the columns of product attributes that we're interested in
 
         int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-       int imageColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_IMAGE);
-     //final Uri productUri = ContentUris.withAppendedId(productEntry.CONTENT_URI,
-                //cursor.getInt(cursor.getColumnIndexOrThrow(productEntry._ID)));
-        // Read the pet attributes from the Cursor for the current pet
+        int imageColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_IMAGE);
+        //final Uri productUri = ContentUris.withAppendedId(productEntry.CONTENT_URI,
+        //cursor.getInt(cursor.getColumnIndexOrThrow(productEntry._ID)));
+        // Read the product attributes from the Cursor for the current product
         String productName = cursor.getString(nameColumnIndex);
         String productPrice = cursor.getString(priceColumnIndex);
-         final String productQuantity = cursor.getString(quantityColumnIndex);
-        final int quantity =Integer.parseInt(productQuantity);
+        final String productQuantity = cursor.getString(quantityColumnIndex);
+        final int quantity = Integer.parseInt(productQuantity);
         byte[] productImage = cursor.getBlob(imageColumnIndex);
         Bitmap bitmap = BitmapFactory.decodeByteArray(productImage, 0, productImage.length);
 
@@ -107,70 +105,8 @@ public class ProductCursorAdapter extends CursorAdapter {
         quantityTextView.setText(productQuantity);
         productImageView.setImageBitmap(bitmap);
 
-/**
-        Button sellButton = (Button) view.findViewById(R.id.sellButton);
-        sellButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri productUri = ContentUris.withAppendedId(productEntry.CONTENT_URI, id);
-                adjustStock(context, productUri, quantity);
-            }
-        });
-    }
-*/
-/**
- * This method reduced product stock by 1
- * @param context - Activity context
- * @param productUri - Uri used to update the stock of a specific product in the ListView
- * @param currentStock - current stock of that specific product
- */
-/**
-    private void adjustStock(Context context, Uri productUri, int currentStock) {
 
-        // Reduce stock, check if new stock is less than 0, in which case set it to 0
-        int newStock = (currentStock >= 1) ? currentStock - 1 : 0;
-
-        // Update table with new stock of the product
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(productEntry.COLUMN_PRODUCT_QUANTITY, newStock);
-        int numRowsUpdated = context.getContentResolver().update(productUri,contentValues,null,null);
-
-        // Display error message in Log if product stock fails to update
-        if (!(numRowsUpdated > 0)) {
-            Log.e(TAG, context.getString(R.string.error_stock_update));
-        }
-
-     */
-
-
-/**   sellButton    ده الكود اللي الولد عامله بس ما شتغلش معايا
-        Button sellButton = (Button) view.findViewById(R.id.sellButton);
-        sellButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view != null) {
-                    Object obj = view.getTag();
-                    String st = obj.toString();
-                    ContentValues values = new ContentValues();
-                    values.put(productEntry.COLUMN_PRODUCT_NAME, name);
-                    values.put(productEntry.COLUMN_PRODUCT_PRICE, price);
-                    values.put(productEntry.COLUMN_PRODUCT_QUANTITY, quantity >= 1? quantity-1: 0);
-                    values.put(productEntry.COLUMN_PRODUCT_IMAGE, imageView);
-
-
-                    Uri currentProductUri = ContentUris.withAppendedId(productEntry.CONTENT_URI,productId);
-
-                    int rowsAffected = mContext.getContentResolver().update(currentProductUri, values, null, null);
-                    if (rowsAffected == 0 || quantity == 0) {
-                        Toast.makeText(mContext, mContext.getString(R.string.Toat), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-        Object obj = cursor.getInt(cursor.getColumnIndex(productEntry._ID));
-        sellButton.setTag(obj);
- */
-       final int productId = cursor.getInt(cursor.getColumnIndex(ProductEntry._ID));
+        final int productId = cursor.getInt(cursor.getColumnIndex(ProductEntry._ID));
 
 // Implement onClickListener method to ImageButton to reduce plant quantity
         // by one every time button is touched on the ListView row
@@ -178,16 +114,16 @@ public class ProductCursorAdapter extends CursorAdapter {
             @Override
             public void onClick(View v) {
                 int mQuantity = quantity;
-                if (mQuantity> 0) {
+                if (mQuantity > 0) {
 
 
-                // Reduce plant quantity, checking before if updated quantity is more than 0.
+                    // Reduce plant quantity, checking before if updated quantity is more than 0.
 
-                     mQuantity = mQuantity - 1;
+                    mQuantity = mQuantity - 1;
                     ContentValues values = new ContentValues();
-                    Uri updateUri=ContentUris.withAppendedId(ProductEntry.CONTENT_URI,productId);
+                    Uri updateUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, productId);
                     values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, mQuantity);
-                     context.getContentResolver().update(updateUri, values, null, null);
+                    context.getContentResolver().update(updateUri, values, null, null);
 
                 } else {
                     // In the case quantity is equal to zero, send a Toast message to user

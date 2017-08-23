@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="20dp"
     tools:context=".EditorActivity">
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,34 +18,35 @@
             android:id="@+id/imageView"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:srcCompat="@drawable/ic_launcher"/>
+            app:srcCompat="@mipmap/ic_launcher_round" />
 
         <Button
             android:id="@+id/chooseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Choose Image"
             android:layout_gravity="center"
-            />
+            android:layout_marginLeft="10dp"
+            android:text="@string/choose_image" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="10dp">
+
         <TextView
             style="@style/EditorUnitsStyle"
-            android:text="Product Name:"
-            android:textColor="#e60422"/>
+            android:text="@string/product_name"
+            android:textColor="#e60422" />
 
         <EditText
             android:id="@+id/edit_product_name"
+            style="@style/EditorFieldStyle"
             android:layout_height="wrap_content"
             android:hint="@string/hint_product_name"
-            android:inputType="text"
-            style="@style/EditorFieldStyle"/>
+            android:inputType="text" />
     </LinearLayout>
 
     <LinearLayout
@@ -52,17 +54,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="10dp">
+
         <TextView
             style="@style/EditorUnitsStyle"
-            android:text="Product Price:"
-            android:textColor="#e60422"/>
+            android:text="@string/product_price"
+            android:textColor="#e60422" />
 
         <EditText
             android:id="@+id/edit_product_price"
+            style="@style/EditorFieldStyle"
             android:layout_height="wrap_content"
-            android:inputType="number"
             android:hint="@string/hint_product_price"
-            style="@style/EditorFieldStyle"/>
+            android:inputType="number" />
     </LinearLayout>
 
     <LinearLayout
@@ -70,72 +73,77 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="10dp">
+
         <TextView
             style="@style/EditorUnitsStyle"
-            android:text="Product Quantity:"
-            android:textColor="#e60422"/>
+            android:text="@string/product_quantity"
+            android:textColor="#e60422" />
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:paddingTop="10dp">
+
             <Button
                 android:id="@+id/decrement_button"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="48dp"
+                android:layout_weight="1"
                 android:text="@string/decrement_name"
-                android:textSize="20sp"
                 android:textColor="#000000"
-                android:visibility="gone"
-                />
+                android:textSize="20sp"
+                android:visibility="gone" />
+
             <EditText
                 android:id="@+id/edit_product_quantity"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_product_quantity"
                 android:layout_gravity="center"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:inputType="number"
-                />
+                android:hint="@string/hint_product_quantity"
+                android:inputType="number" />
+
             <Button
                 android:id="@+id/increment_button"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="48dp"
+                android:layout_weight="1"
+                android:onClick="increment"
                 android:text="@string/increment_name"
-                android:textSize="20sp"
                 android:textColor="#000000"
-                android:visibility="gone"
-                android:onClick="increment"/>
+                android:textSize="20sp"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="10dp">
+
         <TextView
             style="@style/EditorUnitsStyle"
-            android:text="Supplier Email:"
-            android:textColor="#e60422"/>
+            android:text="@string/supplier_email"
+            android:textColor="#e60422" />
 
         <EditText
             android:id="@+id/edit_product_supplier"
+            style="@style/EditorFieldStyle"
             android:layout_height="wrap_content"
             android:hint="@string/hint_supplier_email"
-            android:inputType="text"
-            style="@style/EditorFieldStyle"/>
+            android:inputType="text" />
     </LinearLayout>
+
     <Button
-        android:layout_marginTop="30dp"
-        android:paddingTop="10dp"
         android:id="@+id/orderButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Make Order"
-        android:visibility="gone"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:paddingTop="10dp"
+        android:text="@string/make_order"
+        android:visibility="gone" />
 </LinearLayout>

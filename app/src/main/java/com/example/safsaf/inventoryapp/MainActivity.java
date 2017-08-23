@@ -18,17 +18,23 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import static com.example.safsaf.inventoryapp.data.ProductContract.ProductEntry;
+
 /**
  * Displays list of products that were entered and stored in the app.
  */
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    /** Identifier for the pet data loader */
-            private static final int PRODUCT_LOADER = 0;
+    /**
+     * Identifier for the pet data loader
+     */
+    private static final int PRODUCT_LOADER = 0;
 
-            /** Adapter for the ListView */
-            ProductCursorAdapter mCursorAdapter;
+    /**
+     * Adapter for the ListView
+     */
+    ProductCursorAdapter mCursorAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,17 +49,17 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-// Find the ListView which will be populated with the pet data
-                ListView productListView = (ListView) findViewById(R.id.list);
+// Find the ListView which will be populated with the product data
+        ListView productListView = (ListView) findViewById(R.id.list);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
-               productListView.setEmptyView(emptyView);
+        productListView.setEmptyView(emptyView);
 
-        // Setup an Adapter to create a list item for each row of pet data in the Cursor.
-        // There is no pet data yet (until the loader finishes) so pass in null for the Cursor.
-                mCursorAdapter = new ProductCursorAdapter(this, null);
-                productListView.setAdapter(mCursorAdapter);
+        // Setup an Adapter to create a list item for each row of product data in the Cursor.
+        // There is no product data yet (until the loader finishes) so pass in null for the Cursor.
+        mCursorAdapter = new ProductCursorAdapter(this, null);
+        productListView.setAdapter(mCursorAdapter);
 
         // Setup the item click listener
         productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -62,16 +68,16 @@ public class MainActivity extends AppCompatActivity implements
                 // Create new intent to go to {@link EditorActivity}
                 Intent mIntent = new Intent(MainActivity.this, EditorActivity.class);
 
-                // Form the content URI that represents the specific pet that was clicked on,
+                // Form the content URI that represents the specific product that was clicked on,
                 // by appending the "id" (passed as input to this method) onto the
-                // {@link PetEntry#CONTENT_URI}.
-                // For example, the URI would be "content://com.example.android.pets/pets/2"
+                // {@link ProductEntry#CONTENT_URI}.
+                // For example, the URI would be "content://com.example.safsaf.inventoryapp/products/2"
                 // if the pet with ID 2 was clicked on.
                 Uri currentProductUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
 
                 // Set the URI on the data field of the intent
                 mIntent.setData(currentProductUri);
-                // Launch the {@link EditorActivity} to display the data for the current pet.
+                // Launch the {@link EditorActivity} to display the data for the current product.
                 startActivity(mIntent);
             }
 
@@ -79,15 +85,16 @@ public class MainActivity extends AppCompatActivity implements
 
 
         // Kick off the loader
-                getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
+        getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
 
     /**
-     +     * Helper method to delete all pets in the database.
-     +     */
+     * +     * Helper method to delete all products in the database.
+     * +
+     */
     private void deleteAllPets() {
         int rowsDeleted = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
-        Log.v("CatalogActivity", rowsDeleted + " rows deleted from pet database");
+        Log.v("CatalogActivity", rowsDeleted + " rows deleted from product database");
     }
 
 
@@ -115,36 +122,34 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Define a projection that specifies the columns from the table we care about.
-                String[] projection = {
-                                ProductEntry._ID,
-                                ProductEntry.COLUMN_PRODUCT_NAME,
-                        ProductEntry.COLUMN_PRODUCT_PRICE,
-                        ProductEntry.COLUMN_PRODUCT_QUANTITY,
-                        ProductEntry.COLUMN_PRODUCT_IMAGE};
+        String[] projection = {
+                ProductEntry._ID,
+                ProductEntry.COLUMN_PRODUCT_NAME,
+                ProductEntry.COLUMN_PRODUCT_PRICE,
+                ProductEntry.COLUMN_PRODUCT_QUANTITY,
+                ProductEntry.COLUMN_PRODUCT_IMAGE};
 
-                        // This loader will execute the ContentProvider's query method on a background thread
+        // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
                 ProductEntry.CONTENT_URI,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,
-                                      // No selection arguments
+                // No selection arguments
                 null);                  // Default sort order
-            }
-
-
+    }
 
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Update {@link PetCursorAdapter} with this new cursor containing updated pet data
-                mCursorAdapter.swapCursor(data);
+        mCursorAdapter.swapCursor(data);
 
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 // Callback called when the data needs to be deleted
-                mCursorAdapter.swapCursor(null);
+        mCursorAdapter.swapCursor(null);
     }
 }
