@@ -50,13 +50,13 @@ public class ProductProvider extends ContentProvider {
         // of the products table.
         sUriMatcher.addURI(ProductContract.CONTENT_AUTHORITY, ProductContract.PATH_PRODUCTS, PRODUCTS);
 
-        // The content URI of the form "content://com.example.android.pets/pets/#" will map to the
+        // The content URI of the form "content://com.example.safsaf.inventoryapp/products/#" will map to the
         // integer code {@link #PET_ID}. This URI is used to provide access to ONE single row
-        // of the pets table.
+        // of the products table.
         //
         // In this case, the "#" wildcard is used where "#" can be substituted for an integer.
-        // For example, "content://com.example.android.pets/pets/3" matches, but
-        // "content://com.example.android.pets/pets" (without a number at the end) doesn't match.
+        // For example, "content://com.example.safsaf.inventoryapp/products/3" matches, but
+        // "content://com.example.safsaf.inventoryapp/products" (without a number at the end) doesn't match.
         sUriMatcher.addURI(ProductContract.CONTENT_AUTHORITY, ProductContract.PATH_PRODUCTS + "/#", PRODUCT_ID);
     }
 
@@ -88,18 +88,18 @@ public class ProductProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case PRODUCTS:
-                // For the PETS code, query the pets table directly with the given
+                // For the PRODUCTS code, query the products table directly with the given
                 // projection, selection, selection arguments, and sort order. The cursor
-                // could contain multiple rows of the pets table.
-                // For the PETS code, query the pets table directly with the given
+                // could contain multiple rows of the products table.
+                // For the PRODUCTS code, query the products table directly with the given
                 // projection, selection, selection arguments, and sort order. The cursor
-                // could contain multiple rows of the pets table.
+                // could contain multiple rows of the products table.
                 cursor = database.query(ProductEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case PRODUCT_ID:
                 // For the PET_ID code, extract out the ID from the URI.
-                // For an example URI such as "content://com.example.android.pets/pets/3",
+                // For an example URI such as "content://com.example.safsaf.inventoryapp/products/3",
                 // the selection will be "_id=?" and the selection argument will be a
                 // String array containing the actual ID of 3 in this case.
                 // For every "?" in the selection, we need to have an element in the selection
@@ -108,7 +108,7 @@ public class ProductProvider extends ContentProvider {
                 selection = ProductEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
-                // This will perform a query on the pets table where the _id equals 3 to return a
+                // This will perform a query on the products table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
                 cursor = database.query(ProductEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -144,8 +144,10 @@ public class ProductProvider extends ContentProvider {
     }
 /**
  * هنا بقي مفروض ان لما المستخم يدخل اي تفاصيل فاضيه او يدخل قيمة غلط ما يكملش  معايا بقي بيكمل عادى*/
+
+                                /** I need Help Here*/
     /**
-     * Insert a pet into the database with the given content values. Return the new content URI
+     * Insert a product into the database with the given content values. Return the new content URI
      * for that specific row in the database.
      */
     private Uri insertProduct(Uri uri, ContentValues values) {
@@ -156,16 +158,23 @@ public class ProductProvider extends ContentProvider {
             throw new IllegalArgumentException("Product requires a name");
 
         }
-        // If the weight is provided, check that it's greater than or equal to 0 kg
+        // If the price is provided, check that it's greater than or equal to 0
         Integer price = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_PRICE);
         if(price !=null && price<0) {
             throw new IllegalArgumentException("Product requires valid price");
         }
-        // If the weight is provided, check that it's greater than or equal to 0 kg
+        // If the quantity is provided, check that it's greater than or equal to 0
         Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
         if(quantity !=null && quantity<0) {
             throw new IllegalArgumentException("Product requires valid quantity ");
         }
+        // Check that the supplier is not null
+        String supplier= values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER);
+        if (supplier == null) {
+            throw new IllegalArgumentException("Product requires a supplier email");
+
+        }
+        // Check that the image is not null
         byte[] image = values.getAsByteArray(ProductEntry.COLUMN_PRODUCT_IMAGE);
         if(image==null ) {
             throw new IllegalArgumentException("Product requires valid image ");
@@ -173,14 +182,14 @@ public class ProductProvider extends ContentProvider {
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        // Insert the new pet with the given values
+        // Insert the new product with the given values
         long id = database.insert(ProductEntry.TABLE_NAME, null, values);
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         }
-// Notify all listeners that the data has changed for the pet content URI
+// Notify all listeners that the data has changed for the product content URI
         getContext().getContentResolver().notifyChange(uri, null);
 
         // Return the new URI with the ID (of the newly inserted row) appended at the end
@@ -202,13 +211,13 @@ public class ProductProvider extends ContentProvider {
         }
     }
     /**
-     +     * Update pets in the database with the given content values. Apply the changes to the rows
-     +     * specified in the selection and selection arguments (which could be 0 or 1 or more pets).
-     +     * Return the number of rows that were successfully updated.
-     +     */
+          * Update products in the database with the given content values. Apply the changes to the rows
+          * specified in the selection and selection arguments (which could be 0 or 1 or more products).
+          * Return the number of rows that were successfully updated.
+          */
     private int updateProduct(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // If the {@link PetEntry#COLUMN_PET_NAME} key is present,
-        // check that the name value is not null.
+        // If the {@link ProductEntry#COLUMN_PRODUCTT_NAME} key is present,
+
         // Check that the name is not null
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_NAME)) {
             String name = values.getAsString(ProductEntry.COLUMN_PRODUCT_NAME);
@@ -218,20 +227,30 @@ public class ProductProvider extends ContentProvider {
             }
         }
 
-        // If the weight is provided, check that it's greater than or equal to 0 kg
+        // If the price is provided, check that it's greater than or equal to 0
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_PRICE)) {
             Integer price = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_PRICE);
             if (price == null && price <= 0) {
                 throw new IllegalArgumentException("Product requires valid price");
             }
         }
-        // If the weight is provided, check that it's greater than or equal to 0 kg
+        // If the quantity is provided, check that it's greater than or equal to 0
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_QUANTITY)) {
             Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
             if (quantity == null && quantity <= 0) {
                 throw new IllegalArgumentException("Product requires valid quantity ");
             }
         }
+
+        // Check that the supplier email is not null
+        if (values.containsKey(ProductEntry.COLUMN_PRODUCT_SUPPLIER)) {
+            String supplier = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER);
+            if (supplier == null) {
+                throw new IllegalArgumentException("Product requires a supplier email");
+
+            }
+        }
+          // Check that the image is not null
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_IMAGE)) {
             byte[] image = values.getAsByteArray(ProductEntry.COLUMN_PRODUCT_IMAGE);
             if (image == null) {

@@ -59,8 +59,13 @@ public class EditorActivity extends
 
     /** EditText field to enter the product's quantity */
     private EditText mQuantityEditText;
+    /** EditText field to enter the product's name */
+    private EditText mSupplierEditText;
     /**  buttob to enter the product's Image */
     private Button mButtonImage;
+    private Button mButtonIncrement;
+    private Button mButtonDecrement;
+    private Button mOrderButton;
      private ImageView mImageView;
 
 
@@ -108,7 +113,12 @@ public class EditorActivity extends
         } else {
             // Otherwise this is an existing pet, so change app bar to say "Edit Pet"
             setTitle(getString(R.string.editor_activity_title_edit_product));
-
+            View mButtonDecrement = findViewById(R.id.decrement_button);
+            mButtonDecrement.setVisibility(View.VISIBLE);
+            View mButtonIncrement= findViewById(R.id.increment_button);
+            mButtonIncrement.setVisibility(View.VISIBLE);
+            View mOrderButton= findViewById(R.id.orderButton);
+            mOrderButton.setVisibility(View.VISIBLE);
             // Initialize a loader to read the pet data from the database
             // and display the current values in the editor
             getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER, null, this);
@@ -119,7 +129,11 @@ public class EditorActivity extends
         mNameEditText = (EditText) findViewById(R.id.edit_product_name);
         mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
         mQuantityEditText = (EditText) findViewById(R.id.edit_product_quantity);
+        mSupplierEditText=(EditText)findViewById(R.id.edit_product_supplier);
         mButtonImage=(Button)findViewById(R.id.chooseButton);
+        mButtonDecrement = (Button)findViewById(R.id.decrement_button);
+        mButtonIncrement=(Button) findViewById(R.id.increment_button);
+        mOrderButton=(Button) findViewById(R.id.orderButton);
         mImageView = (ImageView) findViewById(R.id.imageView);
 
 
@@ -128,10 +142,12 @@ public class EditorActivity extends
         // or not, if the user tries to leave the editor without saving.
         mNameEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
+        mSupplierEditText.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
         mButtonImage.setOnTouchListener(mTouchListener);
-
-
+        mButtonIncrement.setOnTouchListener(mTouchListener);
+        mButtonDecrement.setOnTouchListener(mTouchListener);
+        mOrderButton.setOnTouchListener(mTouchListener);
 
 
         // ATTACH A CLICK  LISTENER TO BUTTONCHOOSE  AND GET IMAGE FROM GALLERY TO IMAGE VIEW.
@@ -145,6 +161,58 @@ public class EditorActivity extends
                 );
             }//   public void onClick(View v)
         });//  buttonChoose.setOnClickListener(new View.OnClickListener()
+
+        //Plus and minus buttons
+        mButtonIncrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int quantity = Integer.parseInt(mQuantityEditText.getText().toString().trim());
+                quantity++;
+                mQuantityEditText.setText(Integer.toString(quantity));
+            }
+        });
+
+        mButtonDecrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int quantity = Integer.parseInt(mQuantityEditText.getText().toString().trim());
+                if (quantity == 0) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.Toat),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    quantity = quantity - 1;
+                    mQuantityEditText.setText(Integer.toString(quantity));
+                }
+            }
+        });
+
+
+        mOrderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Get text for color and brand to put in email
+                String nameString = mNameEditText.getText().toString().trim();
+                String supplierString=mSupplierEditText.getText().toString().trim();
+                //Create email message
+                String message =  getString(R.string.email_message1) +
+                        "\n"+ supplierString +
+                        "\n"+ getString(R.string.email_message) +
+                        "\n" + nameString ;
+
+
+                //Send intent
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+
+                intent.putExtra(Intent.EXTRA_SUBJECT,
+                        getString(R.string.email_subject));
+                intent.putExtra(Intent.EXTRA_TEXT, message);
+
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        });
 
     }//   protected void onCreate(Bundle savedInstanceState) {
 
@@ -221,6 +289,7 @@ public class EditorActivity extends
         String nameString = mNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
         String quantityString=mQuantityEditText.getText().toString().trim();
+        String supplierString=mSupplierEditText.getText().toString().trim();
 
         byte[] image= imageViewToByte(mImageView);
 
@@ -244,6 +313,7 @@ public class EditorActivity extends
         }
         values.put(ProductEntry.COLUMN_PRODUCT_PRICE,price);
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY,quantity);
+        values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER,supplierString);
         values.put(ProductEntry.COLUMN_PRODUCT_IMAGE,image);
 
 
@@ -389,6 +459,7 @@ public class EditorActivity extends
                 ProductEntry.COLUMN_PRODUCT_NAME,
                 ProductEntry.COLUMN_PRODUCT_PRICE,
                 ProductEntry.COLUMN_PRODUCT_QUANTITY,
+                ProductEntry.COLUMN_PRODUCT_SUPPLIER,
                 ProductEntry.COLUMN_PRODUCT_IMAGE};
         // This loader will execute the ContentProvider's query method on a background thread
 
@@ -416,17 +487,20 @@ public class EditorActivity extends
             int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
             int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY);
+            int supplierColumnIndex=cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_SUPPLIER);
             final int imageColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_IMAGE);
             // Extract out the value from the Cursor for the given column index
             String productName = cursor.getString(nameColumnIndex);
             String productPrice = cursor.getString(priceColumnIndex);
             final String productQuantity = cursor.getString(quantityColumnIndex);
+            String productSupplier=cursor.getString(supplierColumnIndex);
             byte[] productImage = cursor.getBlob(imageColumnIndex);
             Bitmap bitmap = BitmapFactory.decodeByteArray(productImage, 0, productImage.length);
             // Update the views on the screen with the values from the database
             mNameEditText.setText(productName);
             mPriceEditText.setText(productPrice);
             mQuantityEditText.setText(productQuantity);
+            mSupplierEditText.setText(productSupplier);
             mImageView.setImageBitmap(bitmap);
         }
 
@@ -438,6 +512,7 @@ public class EditorActivity extends
         mNameEditText.setText("");
         mPriceEditText.setText("");
         mQuantityEditText.setText("");
+        mSupplierEditText.setText("");
         mImageView.setImageBitmap(null);
 
     }

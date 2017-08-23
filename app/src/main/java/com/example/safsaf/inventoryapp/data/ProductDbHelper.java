@@ -23,7 +23,7 @@ public class ProductDbHelper extends SQLiteOpenHelper {
     /**
           * Database version. If you change the database schema, you must increment the database version.
           */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     /**
           * Constructs a new instance of {@link ProductDbHelper}.
@@ -45,6 +45,7 @@ public class ProductDbHelper extends SQLiteOpenHelper {
                 + ProductEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
                 + ProductEntry.COLUMN_PRODUCT_PRICE + "  INTEGER NOT NULL DEFAULT 0, "
                 + ProductEntry.COLUMN_PRODUCT_QUANTITY + "  INTEGER NOT NULL DEFAULT 0, "
+                + ProductEntry.COLUMN_PRODUCT_SUPPLIER+ " TEXT NOT NULL, "
                 + ProductEntry.COLUMN_PRODUCT_IMAGE + " BYTE);";
         Log.v(LOG_TAG,SQL_CREATE_PRODUCT_TABLE);
 
@@ -53,8 +54,8 @@ public class ProductDbHelper extends SQLiteOpenHelper {
     }
 
     /**
-     +     * This is called when the database needs to be upgraded.
-     +     */
+          * This is called when the database needs to be upgraded.
+          */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // The database is still at version 1, so there's nothing to do be done here.

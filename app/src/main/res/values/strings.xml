@@ -53,5 +53,13 @@
     <string name="cancel">Cancel</string>
     <string name="quantity">Quantity:</string>
     <string name="error_stock_update">Failed to reduce product stock</string>
+    <string name="hint_supplier_email">Email</string>
+    <string name="decrement_name">-</string>
+    <string name="increment_name">+</string>
+    <!-- Message of email -->
+    <string name="email_message1">Dear,</string>
+    <string name="email_message">We are requesting a shipment of the following item:</string>
+    <!-- Subject for email -->
+    <string name="email_subject">Order Request from safaa</string>
 
 </resources>
