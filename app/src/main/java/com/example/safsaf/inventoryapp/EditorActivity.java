@@ -312,6 +312,15 @@ public class EditorActivity extends
 
         byte[] image = imageViewToByte(mImageView);
 
+        // Check if this is supposed to be a new pet
+        // and check if all the fields in the editor are blank
+        if (mCurrentProductUri == null &&
+                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
+                TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(supplierString)) {
+            // Since no fields were modified, we can return early without creating a new pet.
+            // No need to create ContentValues and no need to do any ContentProvider operations.
+            return;
+                    }
 
         // Create a ContentValues object where column names are the keys,
         // and product attributes from the editor are the values.
@@ -487,9 +496,9 @@ public class EditorActivity extends
                 ProductEntry.CONTENT_URI,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
-                null,
-                // No selection arguments
+                null,// No selection arguments
                 null);                  // Default sort order
+
     }
 
     @Override
