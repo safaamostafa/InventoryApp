@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements
      * +     * Helper method to delete all products in the database.
      * +
      */
-    private void deleteAllPets() {
+    private void deleteAllProducts() {
         int rowsDeleted = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
         Log.v("CatalogActivity", rowsDeleted + " rows deleted from product database");
     }
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
-                deleteAllPets();
+                deleteAllProducts();
                 return true;
         }
         return super.onOptionsItemSelected(item);

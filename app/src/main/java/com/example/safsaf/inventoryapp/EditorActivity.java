@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import static com.example.safsaf.inventoryapp.R.id.imageView;
 import static com.example.safsaf.inventoryapp.data.ProductContract.ProductEntry;
 /**
  * Created by Safsaf on 8/14/2017.
@@ -163,7 +164,7 @@ public class EditorActivity extends
         mButtonDecrement = (Button) findViewById(R.id.decrement_button);
         mButtonIncrement = (Button) findViewById(R.id.increment_button);
         mOrderButton = (Button) findViewById(R.id.orderButton);
-        mImageView = (ImageView) findViewById(R.id.imageView);
+        mImageView = (ImageView) findViewById(imageView);
 
 
 // Setup OnTouchListeners on all the input fields, so we can determine if the user
@@ -315,11 +316,30 @@ public class EditorActivity extends
         // Check if this is supposed to be a new pet
         // and check if all the fields in the editor are blank
         if (mCurrentProductUri == null &&
-                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
-                TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(supplierString)) {
+                TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString) ||
+                TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(supplierString)
+                || image.equals(null)) {
+            if (mCurrentProductUri == null &&
+                    TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
+                    TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(supplierString)
+                    && image.equals(null)) { Toast.makeText(this, "Please, insert all required information.",
+                    Toast.LENGTH_SHORT).show();
+                return;  }
+            if (TextUtils.isEmpty(nameString)){Toast.makeText(this, "Please, insert a  name product.",
+                    Toast.LENGTH_SHORT).show();
+                return;}
+            if (TextUtils.isEmpty(priceString)){Toast.makeText(this, "Please, insert a product price.",
+                    Toast.LENGTH_SHORT).show(); return;}
+            if (TextUtils.isEmpty(supplierString)){Toast.makeText(this, "Please, insert a supplier email.",
+                    Toast.LENGTH_SHORT).show(); return;}
+            if (TextUtils.isEmpty(quantityString)){Toast.makeText(this, "Please, insert a product quantity.",
+                    Toast.LENGTH_SHORT).show(); return;}
+            if ( image.equals(null)){Toast.makeText(this, "Please, insert a product image.",
+                    Toast.LENGTH_SHORT).show(); return;}
+
             // Since no fields were modified, we can return early without creating a new pet.
             // No need to create ContentValues and no need to do any ContentProvider operations.
-            return;
+
                     }
 
         // Create a ContentValues object where column names are the keys,
@@ -583,7 +603,7 @@ public class EditorActivity extends
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Delete" button, so delete the product.
-                deletePet();
+                deleteProduct();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -604,7 +624,7 @@ public class EditorActivity extends
     /**
      * Perform the deletion of the product in the database.
      */
-    private void deletePet() {
+    private void deleteProduct() {
         // Only perform the delete if this is an existing product.
         if (mCurrentProductUri != null) {
             // Call the ContentResolver to delete the product at the given content URI.
