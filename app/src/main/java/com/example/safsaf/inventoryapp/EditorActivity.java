@@ -493,7 +493,7 @@ public class EditorActivity extends
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
-                ProductEntry.CONTENT_URI,   // Provider content URI to query
+                mCurrentProductUri,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,// No selection arguments

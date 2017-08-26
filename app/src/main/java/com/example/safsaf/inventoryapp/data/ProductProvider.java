@@ -91,7 +91,7 @@ public class ProductProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getReadableDatabase();
 
         // This cursor will hold the result of the query
-        Cursor cursor = null;
+        Cursor cursor ;
 
         // Figure out if the URI matcher can match the URI to a specific code
         int match = sUriMatcher.match(uri);
@@ -239,14 +239,14 @@ public class ProductProvider extends ContentProvider {
         // If the price is provided, check that it's greater than or equal to 0
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_PRICE)) {
             Integer price = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_PRICE);
-            if (price == null && price <= 0) {
+            if (price != null && price <= 0) {
                 throw new IllegalArgumentException("Product requires valid price");
             }
         }
         // If the quantity is provided, check that it's greater than or equal to 0
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_QUANTITY)) {
             Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-            if (quantity == null && quantity <= 0) {
+            if (quantity != null && quantity <= 0) {
                 throw new IllegalArgumentException("Product requires valid quantity ");
             }
         }
